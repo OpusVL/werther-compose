@@ -1,0 +1,92 @@
+Usage of /werther:
+  -version
+    	print a version
+
+This application is configured via the environment. The following environment
+variables can be used:
+
+WERTHER_DEV_MODE
+  [description] a development mode
+  [type]        True or False
+  [default]     false
+  [required]    
+WERTHER_LISTEN
+  [description] a host and port to listen on (<host>:<port>)
+  [type]        String
+  [default]     :8080
+  [required]    
+WERTHER_IDENTP_HYDRA_URL
+  [description] an admin URL of ORY Hydra Server
+  [type]        String
+  [default]     
+  [required]    true
+WERTHER_IDENTP_SESSION_TTL
+  [description] a user session's TTL
+  [type]        Duration
+  [default]     24h
+  [required]    
+WERTHER_IDENTP_CLAIM_SCOPES
+  [description] a mapping of OpenID Connect claims to scopes (all claims are URL encoded)
+  [type]        Comma-separated list of String:String pairs
+  [default]     name:profile,family_name:profile,given_name:profile,email:email,http%3A%2F%2Ffithub.com%2Fi-core.ru%2Fwerther%2Fclaims%2Froles:roles
+  [required]    
+WERTHER_LDAP_ENDPOINTS
+  [description] a LDAP's server URLs as "<address>:<port>"
+  [type]        Comma-separated list of String
+  [default]     
+  [required]    true
+WERTHER_LDAP_BINDDN
+  [description] a LDAP bind DN
+  [type]        String
+  [default]     
+  [required]    
+WERTHER_LDAP_BINDPW
+  [description] a LDAP bind password
+  [type]        String
+  [default]     
+  [required]    
+WERTHER_LDAP_BASEDN
+  [description] a LDAP base DN for searching users
+  [type]        String
+  [default]     
+  [required]    true
+WERTHER_LDAP_ATTR_CLAIMS
+  [description] a mapping of LDAP attributes to OpenID connect claims
+  [type]        Comma-separated list of String:String pairs
+  [default]     name:name,sn:family_name,givenName:given_name,mail:email
+  [required]    
+WERTHER_LDAP_ROLE_BASEDN
+  [description] a LDAP base DN for searching roles
+  [type]        String
+  [default]     
+  [required]    true
+WERTHER_LDAP_ROLE_ATTR
+  [description] a LDAP group's attribute that contains a role's name
+  [type]        String
+  [default]     description
+  [required]    
+WERTHER_LDAP_ROLE_CLAIM
+  [description] a name of an OpenID Connect claim that contains user roles
+  [type]        String
+  [default]     https://github.com/i-core/werther/claims/roles
+  [required]    
+WERTHER_LDAP_CACHE_SIZE
+  [description] a user info cache's size in KiB
+  [type]        Integer
+  [default]     512
+  [required]    
+WERTHER_LDAP_CACHE_TTL
+  [description] a user info cache TTL
+  [type]        Duration
+  [default]     30m
+  [required]    
+WERTHER_WEB_DIR
+  [description] a path to an external web directory
+  [type]        String
+  [default]     
+  [required]    
+WERTHER_WEB_BASE_PATH
+  [description] a base path of web pages
+  [type]        String
+  [default]     /
+  [required]    

@@ -1,0 +1,76 @@
+version: "3"
+
+services:
+  hydra-client:
+    image: oryd/hydra:v1.0.0-rc.12
+    environment:
+      HYDRA_ADMIN_URL: http://hydra:4445
+    command:
+      - clients
+      - create
+      - --skip-tls-verify
+      - --id
+      - ${CLIENT_ID}
+      - --secret
+      - ${CLIENT_SECRET}
+      - --response-types
+      - id_token,token,"id_token token"
+      - --grant-types
+      - implicit
+      - --scope
+      - openid,profile,email
+      - --callbacks
+      - ${CALLBACK}
+      - --post-logout-callbacks
+      - ${CALLBACK_LOGOUT}
+    deploy:
+      restart_policy:
+        condition: none
+    depends_on:
+      - hydra
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://hydra:4445"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  hydra:
+    image: oryd/hydra:v1.0.0-rc.12
+    environment:
+      URLS_SELF_ISSUER: ${OAUTH_URL}:4444
+      URLS_SELF_PUBLIC: ${OAUTH_URL}:4444
+      URLS_LOGIN: ${OAUTH_URL}:8080/auth/login
+      URLS_CONSENT: ${OAUTH_URL}:8080/auth/consent
+      URLS_LOGOUT: ${OAUTH_URL}:8080/auth/logout
+      WEBFINGER_OIDC_DISCOVERY_SUPPORTED_SCOPES: profile,email,phone
+      WEBFINGER_OIDC_DISCOVERY_SUPPORTED_CLAIMS: name,family_name,given_name,nickname,email,phone_number
+      DSN: memory
+    command: serve all --dangerous-force-http
+    ports:
+      - "4444:4444"
+      - "4445:4445"
+    deploy:
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - werther
+
+  werther:
+    image: icoreru/werther:v1.0.0
+    environment:
+      WERTHER_DEV_MODE: 1
+      WERTHER_IDENTP_HYDRA_URL: http://hydra:4445
+      WERTHER_ENDPOINTS: ${LDAP_URI}
+      WERTHER_LDAP_ENDPOINTS: ${LDAP_URI}
+      WERTHER_LDAP_BINDDN: ${LDAP_BINDDN}
+      WERTHER_LDAP_BINDPW: ${LDAP_BINDPW}
+      WERTHER_LDAP_BASEDN: ${LDAP_BASEDN}
+      WERTHER_LDAP_ROLE_BASEDN: "ou=Roles,${LDAP_BASEDN}"
+      WERTHER_LDAP_IS_TLS: ${LDAP_TLS}
+      WERTHER_LDAP_ATTR_CLAIMS: ${WERTHER_LDAP_ATTR_CLAIMS}
+
+    ports:
+      - "8080:8080"
+    deploy:
+      restart_policy:
+        condition: on-failure
